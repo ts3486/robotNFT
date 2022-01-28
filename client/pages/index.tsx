@@ -34,12 +34,11 @@ const Index: React.FC = ({ drizzle, drizzleState }: any) => {
 
   //mint&purchase membership NFT
   const purchaseNFT = async (_current: number) => {
-    console.log(drizzle.contracts);
-    const contract = await drizzle.contracts.NFT;
+    const contract = await drizzle.contracts.RobotNFT;
 
     //setting gasLimit and gasPrice was crucial.
-    contract.methods.mintRobot();
-    contract.methods.tokenURI(_current + 1);
+    contract.methods.mintRobot(_current + 1);
+    // contract.methods.tokenURI(_current + 1);
     console.log(`robotNFT${_current + 1} minted`);
   };
 

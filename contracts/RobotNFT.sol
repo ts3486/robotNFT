@@ -14,13 +14,13 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract NFT is ERC721Enumerable, Ownable {
+contract RobotNFT is ERC721Enumerable, Ownable {
   using Strings for uint256;
 
   //baseURI is the location URL of the user (document containing the node).
   string baseURI;
   string public baseExtension = ".json";
-  uint256 public cost = 1 ether;
+  uint256 public cost = 0.01 ether;
   uint256 public maxSupply = 20;
 
   // Optional mapping for token URIs
@@ -41,7 +41,7 @@ contract NFT is ERC721Enumerable, Ownable {
 
   // public
   // string memory _tokenURI
-  function mintRobot() public payable {
+  function mintRobot(string memory _tokenURI) public payable {
     uint256 supply = totalSupply();
     require(supply <= maxSupply);
 
@@ -49,7 +49,10 @@ contract NFT is ERC721Enumerable, Ownable {
       require(msg.value >= cost);
     }
 
-    _mint(msg.sender, supply + 1);
+    uint256 _tokenId = supply + 1;
+
+    _mint(msg.sender, _tokenId);
+    _setTokenURI(_tokenId, _tokenURI);
   }
 
   function checkOwner(uint256 tokenId) public view returns (address) {
@@ -66,19 +69,23 @@ contract NFT is ERC721Enumerable, Ownable {
     return tokenIds;
   }
 
+  function _setTokenURI(uint256 tokenId, string memory _tokenURI) internal virtual {
+    require(_exists(tokenId), "ERC721Metadata: URI set of nonexistent token");
+
+    string memory currentBaseURI = _baseURI();
+
+    _tokenURIs[tokenId] = string(abi.encodePacked(currentBaseURI, _tokenURI, baseExtension));
+  }
+
   function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
     require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
 
     string memory currentBaseURI = _baseURI();
+
     return
       bytes(currentBaseURI).length > 0
         ? string(abi.encodePacked(currentBaseURI, tokenId.toString(), baseExtension))
         : "no uri";
-  }
-
-  function _setTokenURI(uint256 tokenId, string memory _tokenURI) internal virtual {
-    require(_exists(tokenId), "ERC721Metadata: URI set of nonexistent token");
-    _tokenURIs[tokenId] = _tokenURI;
   }
 
   // Only owner

@@ -1,12 +1,12 @@
 import Web3 from "web3";
-import NFT from "../build/contracts/NFT.json";
+import RobotNFT from "../build/contracts/RobotNFT.json";
 
 const drizzleOptions = {
   web3: {
     block: false,
     customProvider: new Web3("ws://localhost:7545"),
   },
-  contracts: [NFT],
+  contracts: [RobotNFT],
 };
 
 export default drizzleOptions;
