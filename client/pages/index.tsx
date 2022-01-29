@@ -1,21 +1,20 @@
-// import getWeb3 from "../getWeb3";
 import React, { useState, useEffect } from "react";
-import {
-  Box,
-  Card,
-  Container,
-  CardContent,
-  CardMedia,
-  Typography,
-  Button,
-  CardActionArea,
-  CardActions,
-} from "@mui/material";
-import styles from "../styles/Home.module.css";
+import { ethers } from "ethers";
+import { Box, Card, Container, CardContent, CardMedia, Typography, Button, CardActions } from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+const projectID = process.env.PROJECT_ID;
+// import getWeb3 from "../getWeb3";
+// const Web3 = require("web3");
+// const web3 = new Web3("http://127.0.0.1:7545");
+// const nftBuild = require("../../build/contracts/RobotNFT.json");
+// const nftContract = new web3.eth.Contract(nftBuild.abi, nftBuild.networks[5777].address);
 
 const Index: React.FC = ({ drizzle, drizzleState }: any) => {
+  console.log("current account: " + drizzleState.accounts[0]);
+
+  console.log(projectID);
+
   const nfts = [
     "/nfts/robot_membership1.png",
     "/nfts/robot_membership2.png",
@@ -24,9 +23,10 @@ const Index: React.FC = ({ drizzle, drizzleState }: any) => {
   ];
   const [current, setCurrent] = useState(0);
 
-  useEffect(() => {
-    console.log(current);
-  }, [current]);
+  let state = drizzle.store.getState();
+  let currentAccount = drizzleState.accounts[0];
+
+  useEffect(() => {}, [state]);
 
   const switchNFT = () => {
     setCurrent((current + 1) % nfts.length);
@@ -35,10 +35,26 @@ const Index: React.FC = ({ drizzle, drizzleState }: any) => {
   //mint&purchase membership NFT
   const purchaseNFT = async (_current: number) => {
     const contract = await drizzle.contracts.RobotNFT;
+    let cost = contract.methods.cost().call();
+    console.log(contract);
 
-    //setting gasLimit and gasPrice was crucial.
-    contract.methods.mintRobot(_current + 1);
-    // contract.methods.tokenURI(_current + 1);
+    let nftType = (current + 1).toString();
+
+    // //drizzle method
+    await contract.methods.mintRobot(nftType).send({
+      value: ethers.utils.parseEther("0.01"),
+      gas: 450000,
+    });
+
+    //standard web3 method
+    // await nftContract.methods
+    //   .mintRobot(nftType)
+    //   .send({
+    //     from: drizzleState.accounts[0],
+    //     value: contract.methods.cost().call(),
+    //     gas: 450000,
+    //   });
+
     console.log(`robotNFT${_current + 1} minted`);
   };
 

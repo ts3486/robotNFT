@@ -20,7 +20,7 @@ contract RobotNFT is ERC721Enumerable, Ownable {
   //baseURI is the location URL of the user (document containing the node).
   string baseURI;
   string public baseExtension = ".json";
-  uint256 public cost = 0.01 ether;
+  uint256 public cost = 0.1 ether;
   uint256 public maxSupply = 20;
 
   // Optional mapping for token URIs

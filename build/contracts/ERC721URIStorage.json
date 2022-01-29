@@ -352,7 +352,7 @@
         2560
       ],
       "ERC165": [
-        2787
+        2861
       ],
       "ERC721": [
         1583
@@ -361,7 +361,7 @@
         2183
       ],
       "IERC165": [
-        2799
+        2873
       ],
       "IERC721": [
         1699
@@ -373,7 +373,7 @@
         1717
       ],
       "Strings": [
-        2763
+        2837
       ]
     },
     "id": 2184,
@@ -435,8 +435,8 @@
           1583,
           2241,
           1699,
-          2787,
-          2799,
+          2861,
+          2873,
           2560
         ],
         "name": "ERC721URIStorage",
@@ -449,7 +449,7 @@
               "id": 2062,
               "name": "Strings",
               "nodeType": "IdentifierPath",
-              "referencedDeclaration": 2763,
+              "referencedDeclaration": 2837,
               "src": "290:7:10"
             },
             "nodeType": "UsingForDirective",
@@ -1950,7 +1950,7 @@
         2560
       ],
       "ERC165": [
-        2787
+        2861
       ],
       "ERC721": [
         1583
@@ -1959,7 +1959,7 @@
         2183
       ],
       "IERC165": [
-        2799
+        2873
       ],
       "IERC721": [
         1699
@@ -1971,7 +1971,7 @@
         1717
       ],
       "Strings": [
-        2763
+        2837
       ]
     },
     "id": 2184,
@@ -2033,8 +2033,8 @@
           1583,
           2241,
           1699,
-          2787,
-          2799,
+          2861,
+          2873,
           2560
         ],
         "name": "ERC721URIStorage",
@@ -2047,7 +2047,7 @@
               "id": 2062,
               "name": "Strings",
               "nodeType": "IdentifierPath",
-              "referencedDeclaration": 2763,
+              "referencedDeclaration": 2837,
               "src": "290:7:10"
             },
             "nodeType": "UsingForDirective",
@@ -3544,7 +3544,7 @@
   },
   "networks": {},
   "schemaVersion": "3.4.4",
-  "updatedAt": "2022-01-16T17:12:03.810Z",
+  "updatedAt": "2022-01-28T07:09:29.613Z",
   "devdoc": {
     "details": "ERC721 token with storage based token URI management.",
     "kind": "dev",
