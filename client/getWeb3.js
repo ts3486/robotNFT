@@ -1,28 +1,35 @@
 import Web3 from "web3";
+import detectEthereumProvider from "@metamask/detect-provider";
 
 const getWeb3 = () =>
   new Promise((resolve, reject) => {
     // Wait for loading completion to avoid race conditions with web3 injection timing.
     window.addEventListener("load", async () => {
-      // Modern dapp browsers...
-      if (window.ethereum) {
-        const web3 = new Web3(window.ethereum);
+      const provider = await detectEthereumProvider();
+
+      if (provider) {
         try {
-          // Request account access if needed
-          await window.ethereum.enable();
-          // Accounts now exposed
-          resolve(web3);
+          //Metamask page should be prompted by user (ex: button click event). "eth_requestAccounts" prompts the browser to provide eth address, and prompts metamask page to appear
+          const accounts = await provider.request({ method: "eth_requestAccounts" });
+          const account = accounts[0];
+          console.log("current account: " + account);
+          provider.on("accountsChanged", (accounts) => {
+            // Time to reload your interface with accounts[0]!
+            console.log("current account: " + accounts[0]);
+          });
+
+          resolve(account);
         } catch (error) {
           reject(error);
         }
       }
       // Legacy dapp browsers...
-      else if (window.web3) {
-        // Use Mist/MetaMask's provider.
-        const web3 = window.web3;
-        console.log("Injected web3 detected.");
-        resolve(web3);
-      }
+      // else if (window.web3) {
+      //   // Use Mist/MetaMask's provider.
+      //   const web3 = window.web3;
+      //   console.log("Injected web3 detected.");
+      //   resolve(web3);
+      // }
       // Fallback to localhost; use dev console port by default...
       else {
         const provider = new Web3.providers.HttpProvider("http://127.0.0.1:7545");
@@ -34,3 +41,5 @@ const getWeb3 = () =>
   });
 
 export default getWeb3;
+
+//else { console.log('Please install MetaMask!');}

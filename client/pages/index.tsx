@@ -3,8 +3,6 @@ import { ethers } from "ethers";
 import { Box, Card, Container, CardContent, CardMedia, Typography, Button, CardActions } from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-const projectID = process.env.PROJECT_ID;
-// import getWeb3 from "../getWeb3";
 // const Web3 = require("web3");
 // const web3 = new Web3("http://127.0.0.1:7545");
 // const nftBuild = require("../../build/contracts/RobotNFT.json");
@@ -12,8 +10,6 @@ const projectID = process.env.PROJECT_ID;
 
 const Index: React.FC = ({ drizzle, drizzleState }: any) => {
   console.log("current account: " + drizzleState.accounts[0]);
-
-  console.log(projectID);
 
   const nfts = [
     "/nfts/robot_membership1.png",

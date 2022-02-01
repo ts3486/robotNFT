@@ -5,7 +5,7 @@ const mnemonic = process.env.MNEMONIC;
 const privateKey = process.env.PRIVATE_KEY;
 const projectID = process.env.PROJECT_ID;
 
-export const RinkebyProvider = new HDWalletProvider(mnemonic, `https://rinkeby.infura.io/v3/${projectID}`);
+const RinkebyProvider = new HDWalletProvider(mnemonic, `https://rinkeby.infura.io/v3/${projectID}`);
 
 module.exports = {
   // See <http://truffleframework.com/docs/advanced/configuration>
@@ -19,6 +19,7 @@ module.exports = {
       network_id: "*",
     },
     rinkeby: {
+      from: "0x4bcFa9287e80138B1705f03bd12C83d775c58ab1",
       provider: RinkebyProvider,
       network_id: 4,
       gas: 10000000,
