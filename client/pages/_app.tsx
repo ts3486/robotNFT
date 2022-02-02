@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Web3 from "web3";
 import getWeb3 from "../getWeb3";
-import drizzleOptions from "../drizzleOptions";
 import type { AppProps } from "next/app";
 import "../styles/globals.css";
 
@@ -20,30 +19,29 @@ function MyApp({ Component, pageProps }: AppProps) {
       setAccount(currentAccount);
     });
   }, []);
-  return (
-    // <DrizzleContext.Provider drizzle={drizzle}>
-    //   <DrizzleContext.Consumer>
-    //     {(drizzleContext: any) => {
-    //       const { drizzle, drizzleState, initialized } = drizzleContext;
-
-    //       if (!initialized) {
-    //         //Improve error ui
-    //         console.log("initializing...");
-    //         return "Loading...";
-    //       }
-
-    //       {
-    //         console.log("initialized");
-    //         return (
-    //           <div className="App">
-    //             <Component {...pageProps} drizzle={drizzle} drizzleState={drizzleState} />
-    //           </div>
-    //         );
-    //       }
-    //     }}
-    //   </DrizzleContext.Consumer>
-    // </DrizzleContext.Provider>
-    <Component {...pageProps} account={account} />
-  );
+  return <Component {...pageProps} account={account} />;
 }
 export default MyApp;
+
+// <DrizzleContext.Provider drizzle={drizzle}>
+//   <DrizzleContext.Consumer>
+//     {(drizzleContext: any) => {
+//       const { drizzle, drizzleState, initialized } = drizzleContext;
+
+//       if (!initialized) {
+//         //Improve error ui
+//         console.log("initializing...");
+//         return "Loading...";
+//       }
+
+//       {
+//         console.log("initialized");
+//         return (
+//           <div className="App">
+//             <Component {...pageProps} drizzle={drizzle} drizzleState={drizzleState} />
+//           </div>
+//         );
+//       }
+//     }}
+//   </DrizzleContext.Consumer>
+// </DrizzleContext.Provider>

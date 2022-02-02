@@ -3,13 +3,17 @@ import { ethers } from "ethers";
 import { Box, Card, Container, CardContent, CardMedia, Typography, Button, CardActions } from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-// const Web3 = require("web3");
-// const web3 = new Web3("http://127.0.0.1:7545");
-// const nftBuild = require("../../build/contracts/RobotNFT.json");
-// const nftContract = new web3.eth.Contract(nftBuild.abi, nftBuild.networks[5777].address);
+const Web3 = require("web3");
+const web3 = new Web3("wss://rinkeby.infura.io/ws/v3/0f3a6fad96f04d13bbbf4654d9099af7");
+const nftBuild = require("../../build/contracts/RobotNFT.json");
+const contract = new web3.eth.Contract(nftBuild.abi, nftBuild.networks[4].address);
+// const contract = new web3.eth.Contract(nftBuild.abi, nftBuild.networks[5777].address); for ganache
+const { mnemonic, publicKey, privateKey } = require("../secret.json");
 
-const Index: React.FC = ({ drizzle, drizzleState }: any) => {
-  console.log("current account: " + drizzleState.accounts[0]);
+const Index: React.FC = ({ account }: any) => {
+  console.log(account);
+
+  const [currentNFT, setCurrent] = useState(0);
 
   const nfts = [
     "/nfts/robot_membership1.png",
@@ -17,39 +21,53 @@ const Index: React.FC = ({ drizzle, drizzleState }: any) => {
     "/nfts/robot_membership3.png",
     "/nfts/robot_membership4.png",
   ];
-  const [current, setCurrent] = useState(0);
 
-  let state = drizzle.store.getState();
-  let currentAccount = drizzleState.accounts[0];
-
-  useEffect(() => {}, [state]);
+  useEffect(() => {}, []);
 
   const switchNFT = () => {
-    setCurrent((current + 1) % nfts.length);
+    setCurrent((currentNFT + 1) % nfts.length);
   };
 
   //mint&purchase membership NFT
   const purchaseNFT = async (_current: number) => {
-    const contract = await drizzle.contracts.RobotNFT;
-    let cost = contract.methods.cost().call();
     console.log(contract);
+    const baseCost = await contract.methods.cost().call();
+    const txnCount = await web3.eth.getTransactionCount(account);
+    const nonce = await ethers.utils.hexlify(txnCount);
 
-    let nftType = (current + 1).toString();
+    let nftType = (currentNFT + 1).toString();
 
-    // //drizzle method
-    await contract.methods.mintRobot(nftType).send({
-      value: ethers.utils.parseEther("0.01"),
-      gas: 450000,
-    });
+    const createTransaction = await web3.eth.accounts.signTransaction(
+      {
+        from: account,
+        nonce: nonce,
+        to: "0x5a9F872046eE206363F91B9cd075a7bF8bd3b698",
+        value: baseCost,
+        gas: 500000,
+        data: contract.methods.mintRobot(nftType).encodeABI(),
+      },
+      privateKey
+    );
 
-    //standard web3 method
-    // await nftContract.methods
-    //   .mintRobot(nftType)
-    //   .send({
-    //     from: drizzleState.accounts[0],
-    //     value: contract.methods.cost().call(),
-    //     gas: 450000,
-    //   });
+    //Want to add loading display
+    // web3.eth.pendingTransactions
+
+    const createReceipt = await web3.eth
+      .sendSignedTransaction(createTransaction.rawTransaction)
+      .once("sending", () => {
+        console.log("sending...");
+      })
+      .once("sent", () => {
+        console.log("sent");
+      })
+      .on("confirmation", (confNumber: any, receipt: any, latestBlockHash: any) => {
+        console.log(confNumber, receipt, latestBlockHash);
+      })
+      .on("error", (error: any) => {
+        console.log(error);
+      });
+
+    console.log(`Transaction successful with hash: ${createReceipt.transactionHash}`);
 
     console.log(`robotNFT${_current + 1} minted`);
   };
@@ -77,7 +95,7 @@ const Index: React.FC = ({ drizzle, drizzleState }: any) => {
           <CardActions sx={{ height: "60%", padding: 0, margin: 0 }}>
             <CardMedia
               component="img"
-              image={nfts[current]}
+              image={nfts[currentNFT]}
               title="robotNFT"
               sx={{ height: "100%", margin: 0 }}
               alt="robotNFT"
@@ -103,7 +121,7 @@ const Index: React.FC = ({ drizzle, drizzleState }: any) => {
               variant="contained"
               color="primary"
               sx={{ padding: 2, width: 150, fontSize: 15, fontWeight: "bold" }}
-              onClick={() => purchaseNFT(current)}>
+              onClick={() => purchaseNFT(currentNFT)}>
               PURCHASE
             </Button>
           </CardActions>
