@@ -1,8 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { ethers } from "ethers";
-import { Box, Card, Container, CardContent, CardMedia, Typography, Button, CardActions } from "@mui/material";
+import {
+  Box,
+  CircularProgress,
+  Card,
+  Container,
+  CardContent,
+  CardMedia,
+  Typography,
+  Button,
+  CardActions,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import DoneAllIcon from "@mui/icons-material/DoneAll";
 const Web3 = require("web3");
 const web3 = new Web3("wss://rinkeby.infura.io/ws/v3/0f3a6fad96f04d13bbbf4654d9099af7");
 const nftBuild = require("../../build/contracts/RobotNFT.json");
@@ -14,6 +30,8 @@ const Index: React.FC = ({ account }: any) => {
   console.log(account);
 
   const [currentNFT, setCurrent] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const nfts = [
     "/nfts/robot_membership1.png",
@@ -56,12 +74,15 @@ const Index: React.FC = ({ account }: any) => {
       .sendSignedTransaction(createTransaction.rawTransaction)
       .once("sending", () => {
         console.log("sending...");
+        setLoading(true);
+        setOpen(true);
       })
       .once("sent", () => {
         console.log("sent");
       })
       .on("confirmation", (confNumber: any, receipt: any, latestBlockHash: any) => {
         console.log(confNumber, receipt, latestBlockHash);
+        setLoading(false);
       })
       .on("error", (error: any) => {
         console.log(error);
@@ -125,6 +146,46 @@ const Index: React.FC = ({ account }: any) => {
               PURCHASE
             </Button>
           </CardActions>
+          <Dialog
+            sx={{
+              "& .MuiDialog-paper": {
+                width: 500,
+                height: 400,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              },
+            }}
+            open={open}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description">
+            {loading ? (
+              <Box sx={{ height: "70%", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+                <DialogTitle sx={{ fontSize: 30 }} id="loading-dialog-title">
+                  {"Your NFT is being minted"}
+                </DialogTitle>
+                <DialogContent
+                  sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
+                  <CircularProgress />
+                </DialogContent>
+              </Box>
+            ) : (
+              <Box sx={{ height: "70%", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+                <DialogTitle sx={{ fontSize: 30 }} id="loaded-dialog-title">
+                  {"Your NFT has been minted!"}
+                </DialogTitle>
+                <DialogContent
+                  sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
+                  <DoneAllIcon sx={{ fontSize: 80, color: "green" }} />
+                </DialogContent>
+                <DialogActions sx={{ display: "flex", justifyContent: "center" }}>
+                  <Button variant="contained" onClick={() => setOpen(false)}>
+                    Close
+                  </Button>
+                </DialogActions>
+              </Box>
+            )}
+          </Dialog>
         </Card>
         <Button color="primary" onClick={() => switchNFT()}>
           <ArrowForwardIosIcon sx={{ fontSize: 50 }} />
